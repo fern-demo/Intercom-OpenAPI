@@ -13695,12 +13695,7 @@ components:
           description: The name of the data attribute.
           example: My Data Attribute
         model:
-          type: string
-          description: The model that the data attribute belongs to.
-          enum:
-          - contact
-          - company
-          example: contact
+          "$ref": "#/components/schemas/attribute_model"
         data_type:
           type: string
           description: The type of data stored for this attribute.
@@ -14283,6 +14278,13 @@ components:
             example: sam.sung@example.com
         required:
         - email
+    attribute_model: 
+      type: string
+      description: The model that the data attribute belongs to.
+      enum:
+      - contact
+      - company
+      example: contact
     data_attribute:
       title: Data Attribute
       type: object
@@ -14305,13 +14307,7 @@ components:
             by Intercom. Only available for custom attributes.
           example: 12878
         model:
-          type: string
-          description: Value is `contact` for user/lead attributes and `company` for
-            company attributes.
-          enum:
-          - contact
-          - company
-          example: contact
+          "$ref": "#/components/schemas/attribute_model"
         name:
           type: string
           description: Name of the attribute.
