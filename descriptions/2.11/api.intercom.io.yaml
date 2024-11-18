@@ -7818,7 +7818,7 @@ paths:
                     object: news-item
                     deleted: true
               schema:
-                "$ref": "#/components/schemas/deleted_object"
+                "$ref": "#/components/schemas/deleted_news-item_object"
         '404':
           description: News Item Not Found
           content:
@@ -8288,6 +8288,8 @@ paths:
                   value:
                     error_key: invalid_phone_number
                     message: Invalid phone number
+              schema:
+                "$ref": "#/components/schemas/error"
         '422':
           description: unprocessable entity
           content:
@@ -8296,18 +8298,12 @@ paths:
                 unprocessable entity:
                   value:
                     error_key: some_error
+              schema:
+                "$ref": "#/components/schemas/error"
         '401':
           description: Unauthorized
           content:
             application/json:
-              examples:
-                Unauthorized:
-                  value:
-                    type: error.list
-                    request_id: 5da7a3e7-dcb0-4378-8575-0a0e9bae3862
-                    errors:
-                    - code: unauthorized
-                      message: Access Token Invalid
               schema:
                 "$ref": "#/components/schemas/error"
       requestBody:
@@ -11168,7 +11164,16 @@ components:
       title: Admin
       type: object
       description: Admins are the teammate accounts that have access to a workspace
-      nullable: true
+      required: 
+        - type
+        - id
+        - name
+        - email
+        - job_title
+        - away_mode_enabled
+        - has_inbox_seat
+        - team_ids
+        - avatar
       properties:
         type:
           type: string
@@ -11216,6 +11221,8 @@ components:
         avatar:
           type: object
           description: This object represents the avatar associated with the admin.
+          required: 
+            - type
           properties:
             type:
               type: string
@@ -11356,7 +11363,7 @@ components:
           type: string
           description: The type of object - `article_content` .
           enum:
-          -
+          - null
           - article_content
           example: article_content
           nullable: true
@@ -11538,10 +11545,12 @@ components:
           description: An Article title highlighted.
           items:
             type: object
+            x-fern-type-name: HighlightedTitle
             description: A highlighted article title.
             properties:
               type:
                 type: string
+                x-fern-type-name: HighlightedTitleType
                 description: The type of text - `highlight` or `plain`.
                 enum:
                 - highlight
@@ -11549,6 +11558,7 @@ components:
                 example: 'The highlight is '
               text:
                 type: string
+                x-fern-type-name: HighlightedText
                 description: The text of the title.
                 example: my query
         highlighted_summary:
@@ -11560,10 +11570,12 @@ components:
               chunks of plain and highlighted text.
             items:
               type: object
+              x-fern-type-name: HighlightedSummary
               description: An instance of highlighted summary text.
               properties:
                 type:
                   type: string
+                  x-fern-type-name: HighlightedSummaryType
                   description: The type of text - `highlight` or `plain`.
                   enum:
                   - highlight
@@ -11571,6 +11583,7 @@ components:
                   example: 'How to highlight '
                 text:
                   type: string
+                  x-fern-type-name: HighlightedSummaryText
                   description: The text of the title.
                   example: my query
     article_search_response:
@@ -14704,8 +14717,8 @@ components:
           type: boolean
           description: Whether the company was deleted successfully or not.
           example: true
-    deleted_object:
-      title: Deleted Object
+    deleted_news-item_object:
+      title: Deleted News Item Object
       type: object
       description: Response returned when an object is deleted
       properties:
@@ -14774,6 +14787,14 @@ components:
       required:
       - type
       - errors
+      examples:
+        Unauthorized:
+          value:
+            type: error.list
+            request_id: 5da7a3e7-dcb0-4378-8575-0a0e9bae3862
+            errors:
+            - code: unauthorized
+              message: Access Token Invalid
     file_attribute:
       title: File
       type: object
@@ -16494,8 +16515,15 @@ components:
           example: Bug title.
         data_type:
           type: string
-          description: 'The type of the data attribute (allowed values: "string list
-            integer decimal boolean datetime files")'
+          description: The data type of the attribute.
+          enum:
+          - string
+          - list
+          - integer
+          - decimal
+          - boolean
+          - datetime
+          - files
           example: string
         input_options:
           type: object
